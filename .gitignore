@@ -1,0 +1,30 @@
+# Gradle
+.gradle
+build
+*.jar
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.c9/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Editor locks and temp files
+.LCKParser.java~
+*.bak
+
+# Log files
+*.log
