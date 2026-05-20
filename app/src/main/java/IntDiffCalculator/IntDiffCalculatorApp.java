@@ -1,4 +1,4 @@
-package IntDiffCalculator.app.src.main.java.IntDiffCalculator;
+package IntDiffCalculator;
 
 import java.util.List;
 import java.util.Scanner;

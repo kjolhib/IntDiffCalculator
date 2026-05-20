@@ -1,5 +1,5 @@
-package IntDiffCalculator.app.src.main.java.IntDiffCalculator.AST.Expr;
+package IntDiffCalculator.AST.Expr;
 
-record NumberExpr(double value) implements Expr {
+public record NumberExpr(double value) implements Expr {
     
 }

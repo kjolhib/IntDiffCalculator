@@ -1,7 +1,7 @@
-package IntDiffCalculator.app.src.main.java.IntDiffCalculator.AST.Expr;
+package IntDiffCalculator.AST.Expr;
 
-import IntDiffCalculator.app.src.main.java.IntDiffCalculator.AST.Op.BinaryOp;
+import IntDiffCalculator.AST.Op.BinaryOp;
 
-record BinaryExpr(BinaryOp operator, Expr left, Expr right) implements Expr {
+public record BinaryExpr(BinaryOp operator, Expr left, Expr right) implements Expr {
 
 }

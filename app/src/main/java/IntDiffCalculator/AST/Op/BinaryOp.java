@@ -1,4 +1,4 @@
-package IntDiffCalculator.app.src.main.java.IntDiffCalculator.AST.Op;
+package IntDiffCalculator.AST.Op;
 
 public enum BinaryOp {
   ADD("+"),

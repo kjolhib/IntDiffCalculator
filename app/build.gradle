@@ -17,7 +17,9 @@ repositories {
 
 dependencies {
     // Use JUnit test framework.
-    testImplementation libs.junit
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
 
     // This dependency is used by the application.
     implementation libs.guava
@@ -39,3 +41,6 @@ run {
     standardInput = System.in
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}

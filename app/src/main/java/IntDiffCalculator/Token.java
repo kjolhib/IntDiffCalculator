@@ -1,4 +1,4 @@
-package IntDiffCalculator.app.src.main.java.IntDiffCalculator;
+package IntDiffCalculator;
 
 /**
  * Token class representing a token in the input expression. Each token has a type and an optional value (for numbers and identifiers).
