@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'IntDiffCalculator.app.src.main.java.IntDiffCalculator.IntDiffCalculatorApp'
+    mainClass = 'IntDiffCalculator.IntDiffCalculatorApp'
 }
 
 run {

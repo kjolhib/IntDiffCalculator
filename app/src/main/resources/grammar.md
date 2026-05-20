@@ -23,7 +23,9 @@ Similarly with all other cases where brackets are **not** specified.
 
 ## Precedence
 **IMPORTANT**: I made the design decision for implicit operations to be *higher* than explicit operations. $\text{Implicit} > \text{Explicit}$.
-Ie. The expression $x * y(z + 1)$ would evaluate as $x * (y * (z + 1))$ in the internal AST representation.
+
+Ie. The expression $x \times y(z + 1)$ would evaluate as $x \times (y \times (z + 1))$ in the internal AST representation.
+
 This is mostly to avoid ambiguous expressions such as that viral $8\div 2(2+2)$ problem or whatever that nonsense was. If you need to divide by something, please just use brackets or fractions. It is just completely unambiguous and the reason $\div$ pretty much is nonexistent in and past high school. 
 Not jabbing anyone, but just something I had a mini-crisis about as I pondered my entire mathematical foundation lmao.
 

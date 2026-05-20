@@ -9,6 +9,7 @@ public class Lexer {
 
   public Lexer(String source) {
     this.source = source.trim();
+    this.pos = 0;
   }
 
   /**

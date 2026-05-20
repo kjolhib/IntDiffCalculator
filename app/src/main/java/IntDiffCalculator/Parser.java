@@ -4,6 +4,8 @@ import java.util.List;
 
 import IntDiffCalculator.AST.Expr.BinaryExpr;
 import IntDiffCalculator.AST.Expr.Expr;
+import static IntDiffCalculator.AST.Expr.ExprFactory.div;
+import static IntDiffCalculator.AST.Expr.ExprFactory.num;
 import IntDiffCalculator.AST.Expr.NumberExpr;
 import IntDiffCalculator.AST.Expr.UnaryExpr;
 import IntDiffCalculator.AST.Expr.VariableExpr;
@@ -177,7 +179,17 @@ public class Parser {
           consumeExpected(TokenType.LPAREN); // known functions must have parentheses, e.g. sin(x)
           Expr arg = parseExpr(); // parse the argument of the expression
           consumeExpected(TokenType.RPAREN);
-          yield new UnaryExpr(resolveFunction(name), arg);
+          yield switch(name) {
+            // Parses co-trig functions as their respective trig identities.
+            case "sec", "secant" -> div(num(1), new UnaryExpr(UnaryOp.COS, arg)); // sec(x) = 1/cos(x)
+            case "csc", "cosecant" -> div(num(1), new UnaryExpr(UnaryOp.SIN, arg)); // csc(x) = 1/sin(x)
+            case "cot", "cotangent" -> div( // cot(x) = 1/tan(x)
+              new UnaryExpr(UnaryOp.COS, arg),
+              new UnaryExpr(UnaryOp.SIN, arg)
+            );
+            // Non trig, parse as usual.
+            default -> new UnaryExpr(resolveFunction(name), arg);
+          };
         }
 
         yield switch (name) {
@@ -239,7 +251,9 @@ public class Parser {
    */
   private boolean isKnownFunction(String name) {
     return switch (name) {
-      case "sin", "cos", "tan", "exp", "ln" -> true;
+      case "sin", "cos", "tan", "sec", "csc", "cot",
+      "secant", "cosecant", "cotangent",
+      "exp", "ln" -> true;
       default -> false;
     };
   }
