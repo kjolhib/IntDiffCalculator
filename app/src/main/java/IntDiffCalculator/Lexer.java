@@ -23,7 +23,7 @@ public class Lexer {
       if (pos >= source.length()) {
         // past the end of the string, break out of the loop
         break;
-      };
+      }
 
       tokens.add(nextToken());
     }

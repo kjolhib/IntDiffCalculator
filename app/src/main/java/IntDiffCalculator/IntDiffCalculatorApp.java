@@ -3,6 +3,8 @@ package IntDiffCalculator;
 import java.util.List;
 import java.util.Scanner;
 
+import IntDiffCalculator.AST.Expr.Expr;
+
 /**
  * Main application class for the Integration/Differentiation Calculator.
  * This class provides a command-line interface for users to input mathematical expressions and choose whether to differentiate or integrate them. It uses a Parser class to process the expressions and compute
@@ -10,6 +12,7 @@ import java.util.Scanner;
 public class IntDiffCalculatorApp {
   private static final Scanner scanner = new Scanner(System.in);
   private static final Parser parser = new Parser();
+  private static final PrettyPrinter prettyPrinter = new PrettyPrinter();
   
   public static void main(String[] args) {
     try (scanner) {
@@ -34,11 +37,20 @@ public class IntDiffCalculatorApp {
           }
           
           try {
+            // Tokenise
             Lexer lexer = new Lexer(expression);
             List<Token> tokens = lexer.tokenise();
             printAllTokens(choice, tokens);
-            // Expr ast = parser.parse(expression);
+
+            // Parse
+            Expr ast = parser.parse(tokens);
+
+            // Pretty printer for verification
+            String prettyString = prettyPrinter.print(ast);
+
+            // Evaluate
             // String result = evaluator.evaluate(choice, ast);
+            // System.out.println("Result: " + result);
           } catch (Exception e) {
             System.out.println("Error processing expression: " + e.getMessage() + "\n");
           }

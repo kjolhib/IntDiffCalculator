@@ -2,8 +2,13 @@ package IntDiffCalculator;
 
 import java.util.List;
 
-import IntDiffCalculator.AST.Expr.*;
-import IntDiffCalculator.AST.Op.*;
+import IntDiffCalculator.AST.Expr.BinaryExpr;
+import IntDiffCalculator.AST.Expr.Expr;
+import IntDiffCalculator.AST.Expr.NumberExpr;
+import IntDiffCalculator.AST.Expr.UnaryExpr;
+import IntDiffCalculator.AST.Expr.VariableExpr;
+import IntDiffCalculator.AST.Op.BinaryOp;
+import IntDiffCalculator.AST.Op.UnaryOp;
 
 
 /**
@@ -40,7 +45,7 @@ public class Parser {
   /**
    * Parses expressions, which are terms connected by + and -.
    * <p>
-   * Represented in the cfg as term (('+' | '-') term)*.
+   * Represented in the cfg as: implicit (('*' | '/') implicit)*
    * </p>
    * @return Expr: the parsed expression.
    */
@@ -67,13 +72,14 @@ public class Parser {
   /**
    * Parses terms, which are factors connected by * and /.
    * <p>
-   * Represented in the cfg as power (('*' | '/') power)*.
+   * Represented in the cfg as: power (('*' | '/') power)*.
    * </p>
    * @return Expr: the parsed term.
    */
   private Expr parseTerm() {
     // handle * and /
-    Expr left = parsePower();
+    // Implicit 
+    Expr left = parseImplicit();
     
     // 0 or more, encoded by * in term.
     while (peek().type() == TokenType.STAR || peek().type() == TokenType.SLASH) {
@@ -85,20 +91,38 @@ public class Parser {
         default -> throw new IllegalStateException("Unexpected token: " + peek() + ". Expected * or /");
       };
       consume();
-      Expr right = parsePower();
+      Expr right = parseImplicit();
       left = new BinaryExpr(operator, left, right); // fold into left
     }
     return left;
   }
-  
+
+  /**
+   * An implicit vs explicit handler. I made the decision to put implicit > explicit in terms of precedence.
+   * <p>
+   * This means that 2x + 3 is parsed as (2x) + 3 and not 2(x + 3).
+   * 
+   * Shouldn't matter if the user correctly placed brackets and knows precedence rules (god forbid the ÷ operator).
+   * </p>
+   * @return
+   */
+  private Expr parseImplicit() {
+    Expr left = parsePower();
+    while (isImplicitMul()) {
+      left = new BinaryExpr(BinaryOp.MUL, left, parsePower()); // fold into left
+    }
+    return left;
+  }
+
   /**
    * Parses exponential expressions. Handles right associativity of exponentiation. E.g. 2^3^4 is parsed as 2^(3^4).
    * <p>
-   * Represented in the cfg as unary ('^' power)?.
+   * Represented in the cfg as: unary ('^' power)?.
    * </p>
    * @return Expr: the parsed exponential expression.
    */
   private Expr parsePower() {
+    // handle ^
     Expr left = parseUnary();
 
     if (peek().type() == TokenType.CARET) {
@@ -111,10 +135,11 @@ public class Parser {
   }
   
   /**
-   * Parses unary expressions. Represented in the cfg as '-' unary | primary.
+   * Parses unary expressions. Represented in the cfg as: '-' unary | primary.
    * @return Expr: the parsed unary expression.
    */
   private Expr parseUnary() {
+    // Handle unary minus, sin and any others
     if (peek().type() == TokenType.MINUS) {
       // parse '-' unary
       consumeExpected(TokenType.MINUS); // consume "-"
@@ -128,7 +153,7 @@ public class Parser {
   
   /**
    * Parses primary expressions: numbers, variables, and parentheses.
-   * Represented in the cfg as NUMBER | IDENTIFIER | IDENTIFIER '(' expression ')' | '(' expression ')'.
+   * Represented in the cfg as: NUMBER | IDENTIFIER | IDENTIFIER '(' expression ')' | '(' expression ')'.
    * <p>
    * Also handles mathematical constants, such as pi and e.
    * </p>
@@ -136,6 +161,7 @@ public class Parser {
    * @throws IllegalArgumentException if the token has an unknown type.
    */
   private Expr parsePrimary() {
+    // Any primary axioms, numbers, variables parentheses
     Token token = peek();
 
     return switch (token.type()) {
@@ -187,6 +213,15 @@ public class Parser {
       result = new BinaryExpr(BinaryOp.MUL, result, new VariableExpr(String.valueOf(name.charAt(i))));
     }
     return result;
+  }
+
+  /**
+   *  Check if the next token indicates implicit multiplication, e.g. 2(3 + x) or 2x
+   * @return boolean: whether the next token indicates implicit multiplication or not.
+   */
+  private boolean isImplicitMul() {
+    Token next = peek();
+    return next.type() == TokenType.LPAREN || next.type() == TokenType.IDENTIFIER;
   }
 
   /**
