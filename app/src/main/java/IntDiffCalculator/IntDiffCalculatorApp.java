@@ -14,11 +14,13 @@ public class IntDiffCalculatorApp {
   private static final Parser parser = new Parser();
   private static final PrettyPrinter prettyPrinter = new PrettyPrinter();
   private static final Simplifier simplifier = new Simplifier();
+
+  private static final Differentiator differentiator = new Differentiator();
+  private static final Integrator integrator = new Integrator();
   
   public static void main(String[] args) {
     try (scanner) {
       System.out.println("=== Integration/Differentiation Calculator ===");
-      Differentiator differentiator = new Differentiator();
       
       while (true) {
         // Continually scan input
@@ -51,7 +53,7 @@ public class IntDiffCalculatorApp {
           Expr resultExpr;
           switch (choice) {
             case DIFFERENTIATION -> resultExpr = differentiator.differentiate(ast);
-            case INTEGRATION -> throw new UnsupportedOperationException("Integration not supported yet.");
+            case INTEGRATION -> resultExpr = integrator.integrate(ast);
             // integrator.integrate(ast);
             default -> throw new IllegalArgumentException("Choice is invalid, must be 1, 2, or 3.");
           }

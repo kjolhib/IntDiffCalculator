@@ -15,6 +15,7 @@ import static IntDiffCalculator.AST.Expr.ExprFactory.sub;
 import IntDiffCalculator.AST.Expr.NumberExpr;
 import IntDiffCalculator.AST.Expr.UnaryExpr;
 import IntDiffCalculator.AST.Expr.VariableExpr;
+import static IntDiffCalculator.Helpers.*;
 
 /**
  * A differentiator class that takes an AST, and then attempts to differentiate it with respect to a given variable.
@@ -63,10 +64,10 @@ public class Differentiator {
       );
       case POW -> {
         // (f^g)' = g * f^(g - 1) * f' where g is a constant.
-        if (!containsVariable(b.left()) && !containsVariable(b.right())) {
+        if (!containsVariable(b.left(), DIFFERENTIATE_WRT_VAR) && !containsVariable(b.right(), DIFFERENTIATE_WRT_VAR)) {
           // Num^Num = 0
           yield num(0);
-        } else if (!containsVariable(b.right())) {
+        } else if (!containsVariable(b.right(), DIFFERENTIATE_WRT_VAR)) {
           // If right variable contains the diff variable, differentiate it 
           yield mul(
             mul(b.right(), pow(b.left(), sub(b.right(), num(1)))), // n * x^(n - 1)
@@ -111,15 +112,6 @@ public class Differentiator {
         fPrime, // f' is the derivative of f
         f // f is the original function
       );
-    };
-  }
-
-  private boolean containsVariable(Expr e) {
-    return switch (e) {
-      case NumberExpr n -> false;
-      case VariableExpr v -> v.name().equals(DIFFERENTIATE_WRT_VAR);
-      case UnaryExpr u -> containsVariable(u.operand());
-      case BinaryExpr b -> containsVariable(b.left()) || containsVariable(b.right());
     };
   }
 }

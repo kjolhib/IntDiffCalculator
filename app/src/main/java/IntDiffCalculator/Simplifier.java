@@ -2,14 +2,13 @@ package IntDiffCalculator;
 
 import IntDiffCalculator.AST.Expr.BinaryExpr;
 import IntDiffCalculator.AST.Expr.Expr;
-import static IntDiffCalculator.AST.Expr.ExprFactory.mul;
-import static IntDiffCalculator.AST.Expr.ExprFactory.num;
-import static IntDiffCalculator.AST.Expr.ExprFactory.pow;
+import static IntDiffCalculator.AST.Expr.ExprFactory.*;
 import IntDiffCalculator.AST.Expr.NumberExpr;
 import IntDiffCalculator.AST.Expr.UnaryExpr;
 import IntDiffCalculator.AST.Expr.VariableExpr;
 import IntDiffCalculator.AST.Op.BinaryOp;
 import IntDiffCalculator.AST.Op.UnaryOp;
+import static IntDiffCalculator.Helpers.*;
 
 /**
  * A class for simplifying expressions. This is where we can apply algebraic simplification rules, such as combining like terms, applying distributive property, and more.
@@ -171,15 +170,6 @@ public class Simplifier {
       }
       // TODO: handle some cos(0) and sin(0) etc.
       default -> u; // currently trig and others don't simplify
-      
     };
-  }
-
-  private boolean isZero(Expr e) {
-    return e instanceof NumberExpr n && n.value() == 0;
-  }
-
-  private boolean isOne(Expr e) {
-    return e instanceof NumberExpr n && n.value() == 1;
   }
 }
