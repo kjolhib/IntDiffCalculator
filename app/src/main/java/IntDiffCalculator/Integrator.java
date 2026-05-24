@@ -75,6 +75,11 @@ public class Integrator {
           throw new UnsupportedOperationException("Cannot integrate variable exponents just yet. Or this integral is unsolvable through elementary means: " + b);
         }
 
+        if (!f.equals(var(INTEGRATE_WRT_VAR))) {
+          // Composite power expressions, may require u-sub which isn't supported.
+          throw new UnsupportedOperationException("Cannot integrate composite power expression: " + b + ". Base is not a bare variable, hence u-sub or by parts may be required.");
+        }
+
         if (expValue == -1) {
           //∫ (f ^ (-1)) dx = ln(f)
           yield ln(f);

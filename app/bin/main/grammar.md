@@ -38,3 +38,9 @@ All other precedence remains relatively standard;
 - Subtraction
 
 Note, Division/Multiplication and Addition/Subtraction have the same precedence and are evaluated **left to right**. It is ordered this way, for those who don't know, is because BODMAS is easier to remember ^_^.
+
+# Notations
+This calculator will always use standard mathematical notations. 
+
+Notes regarding ambiguity:
+- $x3$ will throw an exception. This is because there is no instance where this means anything different than $3x$. Just use the standard please.

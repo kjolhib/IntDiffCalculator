@@ -1,10 +1,13 @@
 package IntDiffCalculator;
 
+import static IntDiffCalculator.AST.Op.BinaryOp.MUL;
+
 import IntDiffCalculator.AST.Expr.BinaryExpr;
 import IntDiffCalculator.AST.Expr.Expr;
 import IntDiffCalculator.AST.Expr.NumberExpr;
 import IntDiffCalculator.AST.Expr.UnaryExpr;
 import IntDiffCalculator.AST.Expr.VariableExpr;
+import IntDiffCalculator.AST.Op.BinaryOp;
 import IntDiffCalculator.AST.Op.UnaryOp;
 
 /**
@@ -17,23 +20,77 @@ import IntDiffCalculator.AST.Op.UnaryOp;
  * This will produce the string "3 + 2x".
  */
 public class PrettyPrinter {
-  public String print(Expr expr) {
+  public String print(Expr e) {
+    // for parsing precedence
+    return printPrecedence(e, 0);
+  }
+  private String printPrecedence(Expr expr, int parentPrecedence) {
     return switch (expr) {
-      case NumberExpr n -> formatNumber(n.value());
-      case VariableExpr v -> v.name();
-      case UnaryExpr u -> switch (u.operator()) {
-        case UnaryOp.NEG -> "-" + print(u.operand());
-        case UnaryOp.SIN -> "sin(" + print(u.operand()) + ")";
-        case UnaryOp.COS -> "cos(" + print(u.operand()) + ")";
-        case UnaryOp.TAN -> "tan(" + print(u.operand()) + ")";
-        case UnaryOp.EXP -> "exp(" + print(u.operand()) + ")";
-        case UnaryOp.LN -> "ln(" + print(u.operand()) + ")";
+      case NumberExpr n -> formatNumber(n.value()); // print a regular number
+      case VariableExpr v -> v.name(); // print regular variable
+      case UnaryExpr u -> switch (u.operator()) { // unary and known function cases
+        case UnaryOp.NEG -> "-" + printPrecedence(u.operand(), 0);
+        case UnaryOp.SIN -> "sin(" + printPrecedence(u.operand(), 0) + ")";
+        case UnaryOp.COS -> "cos(" + printPrecedence(u.operand(), 0) + ")";
+        case UnaryOp.TAN -> "tan(" + printPrecedence(u.operand(), 0) + ")";
+        case UnaryOp.EXP -> "exp(" + printPrecedence(u.operand(), 0) + ")";
+        case UnaryOp.LN -> "ln(" + printPrecedence(u.operand(), 0) + ")";
       };
-      case BinaryExpr b -> "(" + print(b.left()) + " " + b.operator().symbol + " " + print(b.right()) + ")";
+      case BinaryExpr b -> {
+        if (b.operator() == MUL 
+          && b.left() instanceof NumberExpr n // left is a number
+          && !(b.right() instanceof NumberExpr) // and right is not a number
+          && !(b.right() instanceof BinaryExpr rb && rb.operator() == BinaryOp.MUL) // nor is it a binary expression. This case is to guard against 2 * 3(x + 2)
+        ) {
+          // 3 * x becomes 3x 
+          yield formatNumber(n.value()) + printPrecedence(b.right(), findPrecedence(MUL));
+        }
+        if (b.operator() == MUL // mirror of the above case but if the right side is a number
+          && b.right() instanceof NumberExpr n 
+          && !(b.left() instanceof NumberExpr)
+          && !(b.left() instanceof BinaryExpr lb && lb.operator() == BinaryOp.MUL)
+        ) {
+          // x * 3 becomes 3x
+          yield formatNumber(n.value()) + printPrecedence(b.left(), findPrecedence(MUL));
+        }
+
+        /*
+        Given the format:
+          <term> op <term>,
+        we only bracket the first term if it has a lower precedence than the outer.
+        Ie. (2 * x) + 1: 2 * x (mul) > + 1 (add), can trivially be seen to be 2x + 1.
+            (2 + x) * 3: 2 + x (add) < * 3 (mul), therefore cannot remove brackets. 
+        */
+        int myPrecedence = findPrecedence(b.operator()); // find the precedence of the op
+        String inner = printPrecedence(b.left(), myPrecedence) + " " + b.operator().symbol + " " + printPrecedence(b.right(), myPrecedence); // get inner precedence
+        yield myPrecedence < parentPrecedence ? "(" + inner + ")" : inner; // decide to bracket or not
+      }
     };
   }
 
+  /**
+   * Formats a double to an int if possible.
+   * @param value
+   * @return String: the "stringified" of the double
+   */
   private String formatNumber(double value) {
     return value == Math.floor(value) ? String.valueOf((int) value) : String.valueOf(value);
+  }
+
+  /**
+   * Returns the precedence of the mathematical operators, + - * / ^.
+   * Order follows the mathematical standard:
+   * 1. Power
+   * 2. Multiply/Division
+   * 3. Addition/Subtraction
+   * @param op the operator
+   * @return int: a number between 1 - 3, with 1 being lowest precedence (add/sub), 2 being mul/div, and pow being highest (pow)
+   */
+  private int findPrecedence(BinaryOp op) {
+    return switch (op) {
+      case ADD, SUB -> 1;
+      case MUL, DIV -> 2;
+      case POW -> 3;
+    };
   }
 }

@@ -110,6 +110,12 @@ public class Parser {
    */
   private Expr parseImplicit() {
     Expr left = parsePower();
+    Token x = peek();
+    // Detect ambiguous cases:
+    //  - x3. 3x or x ^ 3? nonstandard
+    if (left instanceof VariableExpr v && x.type() == TokenType.NUMBER) {
+      throw new IllegalArgumentException("Ambiguous expression: variable cannot be followed by a number: " + v.name() + x.value() + ". Use explicit notations, e.g. if you meant x * 3 use '3x'.");
+    }
     while (isImplicitMul()) {
       left = new BinaryExpr(BinaryOp.MUL, left, parsePower()); // fold into left
     }
@@ -233,7 +239,8 @@ public class Parser {
    */
   private boolean isImplicitMul() {
     Token next = peek();
-    return next.type() == TokenType.LPAREN || next.type() == TokenType.IDENTIFIER;
+    return next.type() == TokenType.LPAREN // x()
+      || next.type() == TokenType.IDENTIFIER; // xy
   }
 
   /**

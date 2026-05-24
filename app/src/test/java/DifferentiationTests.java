@@ -7,7 +7,6 @@ import IntDiffCalculator.PrettyPrinter;
 
 /**
  * Differentiation tests.
- * Note, outptus are **NOT** fully simplfiied. Only near terms are simplified, and like terms are not collected.
  */
 public class DifferentiationTests {
   private static String differentiate(String exprString) {
@@ -42,26 +41,27 @@ public class DifferentiationTests {
   void testMultiplication() {
     assertEquals("0", differentiate("582 * 2"));
     assertEquals("4", differentiate("x * 4"));
-    assertEquals("((4 * x) + (x * 4))", differentiate("x * 4x"));
+    assertEquals("8x", differentiate("x * 4x"));
   }
 
   @Test
   void testPower() {
     assertEquals("0", differentiate("582 ^ 2"));
-    assertEquals("(4 * (x ^ 3))", differentiate("x ^ 4"));
+    assertEquals("4x ^ 3", differentiate("x ^ 4"));
   }
 
   @Test
   void testTrigExp() {
-    assertEquals("((cos(x) + -sin(x)) + (1 / (cos(x) ^ 2)))", differentiate("sin(x) + cos(x) + tan(x)"));
-    assertEquals("((cos(x) * cos(x)) + (sin(x) * -sin(x)))", differentiate("sin(x) * cos(x)"));
-    assertEquals("((6 * (x ^ 5)) / (x ^ 6))", differentiate("ln(x ^ (4 + 2))"));
+    assertEquals("1 / cos(x) ^ 2 + cos(x) - sin(x)", differentiate("sin(x) + cos(x) + tan(x)"));
+    assertEquals("cos(x) * cos(x) + sin(x) * -sin(x)", differentiate("sin(x) * cos(x)"));
+    assertEquals("6x ^ 5 / x ^ 6", differentiate("ln(x ^ (4 + 2))"));
   }
 
   @Test
   void testMisc() {
-    assertEquals("(((4 * x) + (x * 4)) * (4 ^ 3))", differentiate("x * 4x * 4 ^ 3")); // 256x^2
-    assertEquals("(((cos(x) * x) + sin(x)) + ((5 * (x ^ 4)) * (4 ^ 3)))", differentiate("sin(x) * x + x ^ (3 + 2) * (4 ^ (4 - 1))")); // xsin(x) + 60x
-    assertEquals("(((((1 + (4 ^ 2)) / (x + (x * (4 ^ 2)))) * sin((x + 8))) + (ln((x + (x * (4 ^ 2)))) * cos((x + 8)))) + ((1 / (cos(((x / 4) + 2)) ^ 2)) * (4 / (4 ^ 2))))", differentiate("ln(x + x * (4 ^ 2)) * sin(x + 8 * 1) + tan(x / 4 + 2)")); // log(17x)sin(x + 8) + tan((x + 8) / 4)
+    assertEquals("8x * 4 ^ 3", differentiate("x * 4x * 4 ^ 3")); // d/dx(256x^2)
+    assertEquals("5x ^ 4 * 4 ^ 3 + cos(x) * x + sin(x)", differentiate("sin(x) * x + x ^ (3 + 2) * (4 ^ (4 - 1))")); // d/dx(xsin(x) + 60x)
+    assertEquals("(1 + 4 ^ 2) / (x + x * 4 ^ 2) * sin(8 + x) + 1 / cos(2 + x / 4) ^ 2 * 4 / 4 ^ 2 + ln(x + x * 4 ^ 2) * cos(8 + x)",
+      differentiate("ln(x + x * (4 ^ 2)) * sin(x + 8 * 1) + tan(x / 4 + 2)")); // d/dx(log(17x)sin(x + 8) + tan((x + 8) / 4))
   }
 }

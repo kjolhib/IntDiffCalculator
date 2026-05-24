@@ -3,6 +3,9 @@ This project aims to differentiate and integrate given expressions.
 
 This mainly works as a pure differentiator and integrator, with some basic simplifications.
 
+## Semantic Notes
+The semantic structure and more details of how this calculator parses the inputted expression can be found in the `src/resources` folder, in the `grammar.md` file.
+
 ## Limitations
 ### Simplification
 Due to the AST representation of the expression, the `Simplifier` simplifies only nearby terms. It **cannot**:
