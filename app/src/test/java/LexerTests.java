@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import IntDiffCalculator.Lexer;
-import IntDiffCalculator.Token;
-import IntDiffCalculator.TokenType;
+import CalculusCalculator.Lexer;
+import CalculusCalculator.Token;
+import CalculusCalculator.TokenType;
 
 
 public class LexerTests {

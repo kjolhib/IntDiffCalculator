@@ -26,7 +26,7 @@ Similarly with all other cases where brackets are **not** specified.
 
 Ie. The expression $x \times y(z + 1)$ would evaluate as $x \times (y \times (z + 1))$ in the internal AST representation.
 
-This is mostly to avoid ambiguous expressions such as that viral $8\div 2(2+2)$ problem or whatever that nonsense was. If you need to divide by something, please just use brackets or fractions. It is just completely unambiguous and the reason $\div$ pretty much is nonexistent in and past high school. 
+This is mostly to avoid ambiguous expressions such as that viral $8\div 2(2+2)$ problem or whatever that nonsense was. If you need to divide by something, please just use brackets or fractions. It is just completely unambiguous and the reason $\div$ as a notation pretty much is nonexistent in and past high school. 
 Not jabbing anyone, but just something I had a mini-crisis about as I pondered my entire mathematical foundation lmao.
 
 All other precedence remains relatively standard;
@@ -43,4 +43,4 @@ Note, Division/Multiplication and Addition/Subtraction have the same precedence 
 This calculator will always use standard mathematical notations. 
 
 Notes regarding ambiguity:
-- $x3$ will throw an exception. This is because there is no instance where this means anything different than $3x$. Just use the standard please.
+- $x3$ will throw an exception. This is because there is no instance where this means anything different than $3x$. Just use the standard $3x$ for $3\times x$ and $x \^ 3$ for $x ^ 3$ please.

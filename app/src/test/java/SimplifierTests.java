@@ -1,10 +1,11 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 
-import IntDiffCalculator.ChoiceConstants;
-import IntDiffCalculator.PrettyPrinter;
+import CalculusCalculator.ChoiceConstants;
+import CalculusCalculator.PrettyPrinter;
 
 /**
  * Testing simplification module.
@@ -22,12 +23,17 @@ public class SimplifierTests {
   @Test
   void testBasicAlgebra() {
     assertEquals("24x", simplify("3x^2 + 9x ^ 2"));
-    assertEquals("3x ^ 2 * 18x + 6x * 9x ^ 2", simplify("3x^2 * 9x ^ 2"));
+    assertEquals("108x ^ 3", simplify("3x^2 * 9x ^ 2"));
   }
 
   @Test
   void testMultipleVars() {
     assertEquals("24x + 26y", simplify("3x^2 + 24yx + 9x ^ 2 + 2xy"));
+  }
+
+  @Test
+  void testWrongSideVariable() {
+    assertThrows(IllegalArgumentException.class, () -> simplify("x3"));
   }
 
   /*

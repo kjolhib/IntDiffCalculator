@@ -1,13 +1,13 @@
 import java.util.List;
 
-import IntDiffCalculator.ChoiceConstants;
-import IntDiffCalculator.Differentiator;
-import IntDiffCalculator.Lexer;
-import IntDiffCalculator.Parser;
-import IntDiffCalculator.Simplifier;
-import IntDiffCalculator.Token;
-import IntDiffCalculator.AST.Expr.Expr;
-import IntDiffCalculator.Integrator;
+import CalculusCalculator.ChoiceConstants;
+import CalculusCalculator.Differentiator;
+import CalculusCalculator.Lexer;
+import CalculusCalculator.Parser;
+import CalculusCalculator.Simplifier;
+import CalculusCalculator.Token;
+import CalculusCalculator.AST.Expr.Expr;
+import CalculusCalculator.Integrator;
 
 public class TestingHelpers {
   public static Expr parse(String input) {

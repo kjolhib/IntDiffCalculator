@@ -3,6 +3,9 @@
 build
 *.jar
 
+# Github
+.github
+
 # IDEs
 .idea/
 .vscode/

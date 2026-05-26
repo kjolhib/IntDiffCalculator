@@ -2,8 +2,8 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import IntDiffCalculator.ChoiceConstants;
-import IntDiffCalculator.PrettyPrinter;
+import CalculusCalculator.ChoiceConstants;
+import CalculusCalculator.PrettyPrinter;
 
 /**
  * Differentiation tests.

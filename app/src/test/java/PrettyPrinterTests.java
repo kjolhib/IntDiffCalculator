@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import IntDiffCalculator.PrettyPrinter;
+import CalculusCalculator.PrettyPrinter;
 
 public class PrettyPrinterTests {
   private final PrettyPrinter printer = new PrettyPrinter();

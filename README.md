@@ -8,10 +8,9 @@ The semantic structure and more details of how this calculator parses the inputt
 
 ## Limitations
 ### Simplification
-Due to the AST representation of the expression, the `Simplifier` simplifies only nearby terms. It **cannot**:
-- Collect like terms across the entire expression,
-- Common factors are not cancelled across numerators and denominators,
-- Output is usually "unsimplified" for complex expressions, and would require basic algebra simplification.
+Due to the AST representation of the expression, the `Simplifier` simplifies only nearby terms. 
+It **cannoc**:
+- Cancel common factors across numerators and denominators.
 
 Known Quirks:
 - Negative exponents:

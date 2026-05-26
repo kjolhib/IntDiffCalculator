@@ -2,9 +2,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 
-import IntDiffCalculator.AST.Expr.BinaryExpr;
-import IntDiffCalculator.AST.Expr.Expr;
-import IntDiffCalculator.AST.Op.BinaryOp;
+import CalculusCalculator.AST.Expr.BinaryExpr;
+import CalculusCalculator.AST.Expr.Expr;
+import CalculusCalculator.AST.Op.BinaryOp;
 
 public class ParserTests {
   @Test

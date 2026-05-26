@@ -2,8 +2,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
-import IntDiffCalculator.ChoiceConstants;
-import IntDiffCalculator.PrettyPrinter;
+import CalculusCalculator.ChoiceConstants;
+import CalculusCalculator.PrettyPrinter;
 
 /**
  * Integration tests
@@ -31,7 +31,7 @@ public class IntegrationTests {
 
   @Test
   void testNonWrtVars() {
-    assertEquals("c * x", integrate("c"));
+    assertEquals("x * c", integrate("c"));
   }
 
   @Test
@@ -84,14 +84,49 @@ public class IntegrationTests {
     assertEquals("-x + x * ln(x)", integrate("ln(x)"));
   }
 
-  // Unsupported operations
+  // U-Substitution tests
   @Test
-  void testUSub() {
-    assertThrows(UnsupportedOperationException.class, () -> TestingHelpers.toAst("x * sin(x)", ChoiceConstants.INTEGRATION));
+  void testUSubMul() {
+    assertEquals("-cos(x ^ 2)", integrate("2x * sin(x ^ 2)"));
+    assertEquals("-cos(x ^ 2)", integrate("sin(x ^ 2) * 2x")); // check that both ways is fine
+    assertEquals("sin(x ^ 2)", integrate("2x * cos(x ^ 2)"));
+    assertEquals("exp(x ^ 2)", integrate("2x * exp(x ^ 2)"));
+    assertEquals("-cos(x ^ 3)", integrate("3x^2 * sin(x^3)"));
+    assertEquals("ln(1 + x ^ 2)", integrate("2x / (x ^ 2 + 1)"));
   }
 
   @Test
-  void testVarExp() {
+  void testUSubDiv() {
+    assertEquals("ln(1 + x ^ 2)", integrate("2x / (x ^ 2 + 1)"));
+    assertEquals("ln(1 + x ^ 3)", integrate("3x^2 / (x^3 + 1)"));
+    assertEquals("ln(sin(x))", integrate("cos(x) / sin(x)"));
+    assertEquals("ln(cos(x))", integrate("-sin(x) / cos(x)"));
+
+    // Composite denominators
+    assertEquals("4ln(1 + x ^ 2)", integrate("(8x) / (1 + x ^ 2)"));
+    assertEquals("-exp(-x ^ 2)", integrate("(2x) / exp(x ^ 2)"));
+    assertEquals("3ln(sin(x))", integrate("(3cos(x)) / sin(x)"));
+  }
+
+  @Test
+  void testUSubNestedComposites() {
+    assertEquals("exp(sin(x))", integrate("exp(sin(x)) * cos(x)"));
+    // assertEquals("-cos(x ^ 2)", integrate("sin(x ^ 2) * cos(x ^ 2)")); // requires trig substutition, ignore for now
+  }
+
+  @Test
+  void testUSubK() {
+    // A test in case of fractional k.
+    assertEquals("-0.5cos(x ^ 2)", integrate("x * sin(x ^ 2)")); // k = 0.5
+    assertEquals("0.5ln(1 + x ^ 2)", integrate("x / (1 + x ^ 2)"));
+  }
+
+  @Test
+  void testByParts() {
     assertThrows(UnsupportedOperationException.class, () -> TestingHelpers.toAst("x ^ x", ChoiceConstants.INTEGRATION));
+    assertThrows(UnsupportedOperationException.class, () -> integrate("x * exp(x)"));
+    assertThrows(UnsupportedOperationException.class, () -> integrate("x * sin(x)"));
+    assertThrows(UnsupportedOperationException.class, () -> integrate("ln(x ^ 2 + 1))")); // = x * ln(x^2+1) - 2x + 2arctan(x)
+    assertThrows(UnsupportedOperationException.class, () -> integrate("1 / (x ^ 2 + 1)")); // arctan(x)
   }
 }
