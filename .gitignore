@@ -31,3 +31,6 @@ ehthumbs.db
 
 # Log files
 *.log
+
+# Java class files
+*.class
