@@ -19,10 +19,11 @@ public class TestingHelpers {
     List<Token> tokens = new Lexer(exprString).tokenise();
     Expr ast = new Parser().parse(tokens);
     Expr resAst;
-    if (mode == ChoiceConstants.DIFFERENTIATION) {
-      resAst = new Differentiator().differentiate(ast);
-    } else {
-      resAst = new Integrator().integrate(ast);
+    switch (mode) {
+      case DIFFERENTIATION -> resAst = new Differentiator().differentiate(ast);
+      case INTEGRATION -> resAst = new Integrator().integrate(ast);
+      case SIMPLIFY -> resAst = ast;
+      default -> throw new IllegalArgumentException("An illegal mode was parsed in: " + mode);
     }
     Expr simplifiedAst = new Simplifier().simplify(resAst);
     return simplifiedAst;

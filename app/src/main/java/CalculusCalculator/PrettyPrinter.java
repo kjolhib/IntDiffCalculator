@@ -39,19 +39,17 @@ public class PrettyPrinter {
       case BinaryExpr b -> {
         if (b.operator() == MUL 
           && b.left() instanceof NumberExpr n // left is a number
-          && !(b.right() instanceof NumberExpr) // and right is not a number
-          && !(b.right() instanceof BinaryExpr rb && rb.operator() == BinaryOp.MUL) // nor is it a binary expression. This case is to guard against 2 * 3(x + 2)
+          && !startsWithNumber(b.right()) // nor is it a binary expression. This case is to guard against 2 * 3(x + 2)
         ) {
           // 3 * x becomes 3x 
           yield formatNumber(n.value()) + printPrecedence(b.right(), findPrecedence(MUL));
         }
-        if (b.operator() == MUL // mirror of the above case but if the right side is a number
-          && b.right() instanceof NumberExpr n 
-          && !(b.left() instanceof NumberExpr)
-          && !(b.left() instanceof BinaryExpr lb && lb.operator() == BinaryOp.MUL)
+        
+        if (b.operator() == MUL
+          && b.left() instanceof VariableExpr v
+          && !startsWithNumber(b.right())
         ) {
-          // x * 3 becomes 3x
-          yield formatNumber(n.value()) + printPrecedence(b.left(), findPrecedence(MUL));
+          yield v.name() + printPrecedence(b.right(), findPrecedence(MUL));
         }
 
         /*
@@ -91,6 +89,24 @@ public class PrettyPrinter {
       case ADD, SUB -> 1;
       case MUL, DIV -> 2;
       case POW -> 3;
+    };
+  }
+
+  /**
+   * Detects whether or not a multiplication chain starts with a number expression
+   * @param e expression to check if starts with NumberExpr
+   * @return true or false
+   */
+  private boolean startsWithNumber(Expr e) {
+    return switch (e) {
+      case NumberExpr n -> true;
+      case BinaryExpr b -> {
+        if (b.operator() == MUL) {
+          yield b.left() instanceof NumberExpr;
+        }
+        yield false;
+      }
+      default -> false;
     };
   }
 }

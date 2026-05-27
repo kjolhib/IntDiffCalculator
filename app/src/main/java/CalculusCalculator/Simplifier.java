@@ -142,7 +142,9 @@ public class Simplifier {
         }
 
         if (left instanceof NumberExpr l && right instanceof BinaryExpr rb && rb.operator() == BinaryOp.MUL) {
+          // number * (binaryExpr)
           if (rb.left() instanceof NumberExpr rl) {
+            // number * (number1 * ...) = (number * number1) * (...)
             yield mul(num(l.value() * rl.value()), rb.right());
           }
         }
@@ -213,9 +215,15 @@ public class Simplifier {
         }
 
         if (left instanceof BinaryExpr l && l.operator() == BinaryOp.POW) {
+          // (x ^ y) ^ z = x ^ (xy)
           if (l.right() instanceof NumberExpr x && right instanceof NumberExpr y) {
             yield pow(l.left(), num(x.value() * y.value()));
           }
+        }
+
+        if (left instanceof NumberExpr l && right instanceof NumberExpr r) {
+          // x ^ y where x and y are constants
+          yield num(Math.pow(l.value(), r.value()));
         }
 
         yield b;
@@ -310,7 +318,8 @@ public class Simplifier {
         g.get(0).base() // the base is the same for each like term that gets summed, just take the 1st one
       ))
       .filter(t -> t.coefficient() != 0) // filter out 0s
-      .sorted(Comparator.comparing(t -> printer.print(t.base()))) // makes sure 3x + 4 and 4 + 3x won't cause infinite loops in the simplifier
+      .sorted(Comparator.comparingDouble((Term t) -> degree(t.base())).reversed() // make sure that the highest degree will always com first
+        .thenComparing(t -> printer.print(t.base()))) // makes sure 3x + 4 and 4 + 3x won't cause infinite loops in the simplifier
       .toList();
     
       // Nothing left, ie. everything calcelled out
@@ -434,6 +443,7 @@ public class Simplifier {
 
     return vars.entrySet().stream()
       .filter(entry -> entry.getValue() != 0) // skip any x  ^ 0
+      .sorted(Map.Entry.comparingByKey()) // sort by alphabetical order
       .map(entry -> {
         String var = entry.getKey();
         double exp = entry.getValue();
@@ -447,5 +457,24 @@ public class Simplifier {
       })
       .reduce((a, b) -> new BinaryExpr(BinaryOp.MUL, a, b)) // x ^ 3 * y
       .orElse(num(1));
+  }
+
+  private double degree(Expr e) {
+    return switch (e) {
+      case NumberExpr n -> 0; // constant
+      case VariableExpr v -> 1; // simple variable
+      case BinaryExpr b -> {
+        if (b.operator() == BinaryOp.POW
+          && b.right() instanceof NumberExpr n
+        ) {
+          // x ^ n yield the degree n
+          yield n.value();
+        }
+
+        // If not a power, then should be multiply
+        yield degree(b.left()) + degree(b.right()); // x * y
+      }
+      default -> 0;
+    };
   }
 }

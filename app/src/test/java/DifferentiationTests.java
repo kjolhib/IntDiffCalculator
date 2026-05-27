@@ -59,9 +59,9 @@ public class DifferentiationTests {
 
   @Test
   void testMisc() {
-    assertEquals("8x * 4 ^ 3", differentiate("x * 4x * 4 ^ 3")); // d/dx(256x^2)
-    assertEquals("5x ^ 4 * 4 ^ 3 + cos(x) * x + sin(x)", differentiate("sin(x) * x + x ^ (3 + 2) * (4 ^ (4 - 1))")); // d/dx(xsin(x) + 60x)
-    assertEquals("(1 + 4 ^ 2) / (x + x * 4 ^ 2) * sin(8 + x) + 1 / cos(2 + x / 4) ^ 2 * 4 / 4 ^ 2 + ln(x + x * 4 ^ 2) * cos(8 + x)",
+    assertEquals("512x", differentiate("x * 4x * 4 ^ 3")); // d/dx(256x^2)
+    assertEquals("320x ^ 4 + cos(x) * x + sin(x)", differentiate("sin(x) * x + x ^ (3 + 2) * (4 ^ (4 - 1))")); // d/dx(xsin(x) + 60x)
+    assertEquals("1 / cos(x / 4 + 2) ^ 2 * 4 / 16 + 17 / 17x * sin(x + 8) + ln(17x) * cos(x + 8)",
       differentiate("ln(x + x * (4 ^ 2)) * sin(x + 8 * 1) + tan(x / 4 + 2)")); // d/dx(log(17x)sin(x + 8) + tan((x + 8) / 4))
   }
 }

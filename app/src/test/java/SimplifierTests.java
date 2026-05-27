@@ -2,7 +2,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 
 import CalculusCalculator.ChoiceConstants;
 import CalculusCalculator.PrettyPrinter;
@@ -17,18 +16,18 @@ import CalculusCalculator.PrettyPrinter;
 public class SimplifierTests {
   private static String simplify(String exprString) {
     // TODO: eventually allow this calculator to simplify algebra
-    return new PrettyPrinter().print(TestingHelpers.toAst(exprString, ChoiceConstants.DIFFERENTIATION));
+    return new PrettyPrinter().print(TestingHelpers.toAst(exprString, ChoiceConstants.SIMPLIFY));
   }
   
   @Test
   void testBasicAlgebra() {
-    assertEquals("24x", simplify("3x^2 + 9x ^ 2"));
-    assertEquals("108x ^ 3", simplify("3x^2 * 9x ^ 2"));
+    assertEquals("12x ^ 2", simplify("3x^2 + 9x ^ 2"));
+    assertEquals("27x ^ 4", simplify("3x^2 * 9x ^ 2"));
   }
 
   @Test
   void testMultipleVars() {
-    assertEquals("24x + 26y", simplify("3x^2 + 24yx + 9x ^ 2 + 2xy"));
+    assertEquals("12x ^ 2 + 26xy", simplify("3x^2 + 24yx + 9x ^ 2 + 2xy"));
   }
 
   @Test
@@ -36,8 +35,53 @@ public class SimplifierTests {
     assertThrows(IllegalArgumentException.class, () -> simplify("x3"));
   }
 
-  /*
-  More tests pending... Nearly all simplification cases handled in other integration/differentiation tests.
-  I did integration/differentiation first cuz that was the primary function of this calculator, and the simplifier was just a byproduct of seeing how far I can push this.
-  */
+  @Test
+  void testSimpleNumber() {
+    assertEquals("3", simplify("3"));
+  }
+
+  @Test
+  void testNonSingleDigit() {
+    assertEquals("342", simplify("342"));
+    assertEquals("88", simplify("88"));
+    assertEquals("3.4", simplify("3.4"));
+  }
+
+  @Test
+  void testSimpleVariable() {
+    assertEquals("x", simplify("x"));
+    assertEquals("42x", simplify("42x"));
+    assertEquals("3.4x", simplify("3.4x"));
+    assertThrows(IllegalArgumentException.class, () -> simplify("x3"));
+  }
+
+  @Test
+  void testSimpleAddition() {
+    assertEquals("5", simplify("2 + 3"));
+    assertEquals("x + 5", simplify("x + 5"));
+    assertEquals("28.5", simplify("3.4 + 25.1"));
+  }
+
+  @Test
+  void testSimpleMultiplication() {
+    assertEquals("6", simplify("2 * 3"));
+    assertEquals("5x", simplify("x * 5"));
+    assertEquals("85.34", simplify("3.4 * 25.1"));
+  }
+
+  @Test
+  void testPrecedence() {
+    assertEquals("ax", simplify("ax"));
+    assertEquals("4x + 12", simplify("(3+x)*4"));
+    assertEquals("4x + 3", simplify("3 + 4 * x"));
+    assertEquals("65536", simplify("2^2^4"));
+    assertEquals("x ^ 20", simplify("x^(5*4)"));
+  }
+
+  @Test
+  void testImplicitMultiplication() {
+    assertEquals("5x", simplify("(2+3)x"));
+    assertEquals("3x + 6", simplify("3(x+2)"));
+    assertEquals("6x + 12", simplify("2*3(x+2)"));
+  }
 }

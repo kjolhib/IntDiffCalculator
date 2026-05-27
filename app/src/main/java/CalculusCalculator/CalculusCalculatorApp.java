@@ -20,7 +20,7 @@ public class CalculusCalculatorApp {
   
   public static void main(String[] args) {
     try (scanner) {
-      System.out.println("=== Integration/Differentiation Calculator ===");
+      System.out.println("=== Calculus Calculator ===");
       
       while (true) {
         // Continually scan input
@@ -57,15 +57,18 @@ public class CalculusCalculatorApp {
           switch (choice) {
             case DIFFERENTIATION -> resultExpr = differentiator.differentiate(astSimplified);
             case INTEGRATION -> resultExpr = integrator.integrate(astSimplified);
-            // integrator.integrate(ast);
-            default -> throw new IllegalArgumentException("Choice is invalid, must be 1, 2, or 3.");
+            case SIMPLIFY -> {
+              System.out.println("Result: " + prettyPrinter.print(astSimplified));
+              return;
+            }
+            default -> throw new IllegalArgumentException("Choice is invalid, must be 1, 2, 3, or 4.");
           }
 
           // Finally simplify the result
           Expr resultSimplified = simplifier.simplify(resultExpr);
           String result = prettyPrinter.print(resultSimplified);
           System.out.println("Result: " + result);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
           System.out.println("Error processing expression: " + e.getMessage() + "\n");
         }
       }
@@ -79,7 +82,8 @@ public class CalculusCalculatorApp {
     System.out.println("\nWhat would you like to do?");
     System.out.println("1. Differentiate");
     System.out.println("2. Integrate");
-    System.out.println("3. Exit");
+    System.out.println("3. Simplify");
+    System.out.println("4. Exit");
   }
   
   /**
@@ -88,25 +92,17 @@ public class CalculusCalculatorApp {
   */
   private static int getUserChoice() {
     int choice = -1;
-    while (choice < 1 || choice > 3) {
-      System.out.print("Enter your choice (1-3): ");
+    while (choice < 1 || choice > 4) {
+      System.out.print("Enter your choice (1-4): ");
       try {
         choice = Integer.parseInt(scanner.nextLine().trim());
-        if (choice < 1 || choice > 3) {
-          System.out.println("Invalid choice. Please enter 1, 2, or 3.");
+        if (choice < 1 || choice > 4) {
+          System.out.println("Invalid choice. Please enter 1, 2, 3, or 4.");
         }
       } catch (NumberFormatException e) {
         System.out.println("Invalid input. Please enter a number.");
       }
     }
     return choice;
-  }
-  
-  private static void printAllTokens(int choice, List<Token> tokens) {
-    String operation = (choice == 1) ? "Differentiating:" : "Integrating:";
-    System.out.println(operation);
-    for (Token token : tokens) {
-      System.out.println(token.toString());
-    }
   }
 }

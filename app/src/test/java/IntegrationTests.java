@@ -13,6 +13,7 @@ public class IntegrationTests {
     return new PrettyPrinter().print(TestingHelpers.toAst(exprString, ChoiceConstants.INTEGRATION));
   }
 
+  // Simple integration tests
   @Test
   void testConstant() {
     assertEquals("3x", integrate("3"));
@@ -31,7 +32,7 @@ public class IntegrationTests {
 
   @Test
   void testNonWrtVars() {
-    assertEquals("x * c", integrate("c"));
+    assertEquals("cx", integrate("c"));
   }
 
   @Test
@@ -48,12 +49,12 @@ public class IntegrationTests {
 
   @Test
   void testSum() {
-    assertEquals("x + 2x ^ 2 / 2", integrate("2x + 1"));
+    assertEquals("2x ^ 2 / 2 + x", integrate("2x + 1"));
   }
 
   @Test
   void testSubtract() {
-    assertEquals("-x + 2x ^ 2 / 2", integrate("2x - 1"));
+    assertEquals("2x ^ 2 / 2 - x", integrate("2x - 1"));
   }
 
   @Test
@@ -81,7 +82,7 @@ public class IntegrationTests {
   @Test 
   void testLn() {
     assertEquals("ln(x)", integrate("1/x"));
-    assertEquals("-x + x * ln(x)", integrate("ln(x)"));
+    assertEquals("-x + xln(x)", integrate("ln(x)"));
   }
 
   // U-Substitution tests
@@ -92,18 +93,18 @@ public class IntegrationTests {
     assertEquals("sin(x ^ 2)", integrate("2x * cos(x ^ 2)"));
     assertEquals("exp(x ^ 2)", integrate("2x * exp(x ^ 2)"));
     assertEquals("-cos(x ^ 3)", integrate("3x^2 * sin(x^3)"));
-    assertEquals("ln(1 + x ^ 2)", integrate("2x / (x ^ 2 + 1)"));
+    assertEquals("ln(x ^ 2 + 1)", integrate("2x / (x ^ 2 + 1)"));
   }
 
   @Test
   void testUSubDiv() {
-    assertEquals("ln(1 + x ^ 2)", integrate("2x / (x ^ 2 + 1)"));
-    assertEquals("ln(1 + x ^ 3)", integrate("3x^2 / (x^3 + 1)"));
+    assertEquals("ln(x ^ 2 + 1)", integrate("2x / (x ^ 2 + 1)"));
+    assertEquals("ln(x ^ 3 + 1)", integrate("3x^2 / (x^3 + 1)"));
     assertEquals("ln(sin(x))", integrate("cos(x) / sin(x)"));
     assertEquals("ln(cos(x))", integrate("-sin(x) / cos(x)"));
 
     // Composite denominators
-    assertEquals("4ln(1 + x ^ 2)", integrate("(8x) / (1 + x ^ 2)"));
+    assertEquals("4ln(x ^ 2 + 1)", integrate("(8x) / (1 + x ^ 2)"));
     assertEquals("-exp(-x ^ 2)", integrate("(2x) / exp(x ^ 2)"));
     assertEquals("3ln(sin(x))", integrate("(3cos(x)) / sin(x)"));
   }
@@ -118,9 +119,10 @@ public class IntegrationTests {
   void testUSubK() {
     // A test in case of fractional k.
     assertEquals("-0.5cos(x ^ 2)", integrate("x * sin(x ^ 2)")); // k = 0.5
-    assertEquals("0.5ln(1 + x ^ 2)", integrate("x / (1 + x ^ 2)"));
+    assertEquals("0.5ln(x ^ 2 + 1)", integrate("x / (1 + x ^ 2)"));
   }
 
+  // By parts
   @Test
   void testByParts() {
     assertThrows(UnsupportedOperationException.class, () -> TestingHelpers.toAst("x ^ x", ChoiceConstants.INTEGRATION));

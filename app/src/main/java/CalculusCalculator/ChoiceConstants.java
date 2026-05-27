@@ -3,7 +3,8 @@ package CalculusCalculator;
 public enum ChoiceConstants {
   DIFFERENTIATION(1),
   INTEGRATION(2),
-  EXIT(3);
+  SIMPLIFY(3),
+  EXIT(4);
 
   private final int value;
 
