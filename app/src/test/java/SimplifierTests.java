@@ -8,14 +8,9 @@ import CalculusCalculator.PrettyPrinter;
 
 /**
  * Testing simplification module.
- * Most of the simplification tests is actually already completed in integration/differentiation tests, as a pure byproduct of me not wanting to read the god awful unsimplified, non-canonical, state.
- * <p>
- * Note; I am using differentiation as an input to my test expressions because I have not yet implemented a pure algebra mode (Honestly it's trivial to do at this point but I'm not bothered lol).
- * </p>
  */
 public class SimplifierTests {
   private static String simplify(String exprString) {
-    // TODO: eventually allow this calculator to simplify algebra
     return new PrettyPrinter().print(TestingHelpers.toAst(exprString, ChoiceConstants.SIMPLIFY));
   }
   
@@ -41,9 +36,9 @@ public class SimplifierTests {
   }
 
   @Test
-  void testNonSingleDigit() {
+  void testSingleDigit() {
     assertEquals("342", simplify("342"));
-    assertEquals("88", simplify("88"));
+    assertEquals("-88", simplify("-88"));
     assertEquals("3.4", simplify("3.4"));
   }
 
@@ -59,6 +54,7 @@ public class SimplifierTests {
   void testSimpleAddition() {
     assertEquals("5", simplify("2 + 3"));
     assertEquals("x + 5", simplify("x + 5"));
+    assertEquals("5x + 5", simplify("x + 5 + 4x"));
     assertEquals("28.5", simplify("3.4 + 25.1"));
   }
 
@@ -66,6 +62,7 @@ public class SimplifierTests {
   void testSimpleMultiplication() {
     assertEquals("6", simplify("2 * 3"));
     assertEquals("5x", simplify("x * 5"));
+    assertEquals("4x ^ 2", simplify("x * 4x"));
     assertEquals("85.34", simplify("3.4 * 25.1"));
   }
 
