@@ -71,11 +71,11 @@ public class SimplifierTests {
 
   @Test
   void testPrecedence() {
-    assertEquals("ax", simplify("ax"));
+    assertEquals("ax", simplify("xa"));
     assertEquals("4x + 12", simplify("(3+x)*4"));
     assertEquals("4x + 3", simplify("3 + 4 * x"));
     assertEquals("65536", simplify("2^2^4"));
-    assertEquals("x ^ 20", simplify("x^(5*4)"));
+    assertEquals("x ^ 20 + x ^ 2 + 40", simplify("x^2 + 40 + x^(5*4) "));
   }
 
   @Test
